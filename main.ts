@@ -1,37 +1,42 @@
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import * as gh from 'gh'
 
-// Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
-	mySetting: string;
+interface Settings {
+	pat: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+const DEFAULT_SETTINGS: Settings = {
+	pat: ''
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class GhPlugin extends Plugin {
+	settings: Settings;
 
 	async onload() {
 		await this.loadSettings();
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
-
-		// this.registerMarkdownPostProcessor((element, context) => {
-		// 	const links = element.findAll("a");
-		// 	for (const link of links) {
-		// 		const text = link.innerText.trim();
-		// 		if (text.startsWith("https://github.com/")) {
-		// 			link.replaceWith("🐙");
-		// 		}
-		// 	}
-		// });
+		this.registerMarkdownPostProcessor(async (element, context) => {
+			const links = element.findAll("a");
+			for (const link of links) {
+				const text = link.innerText.trim();
+				if (text.startsWith("https://github.com/")) {
+					const urlData = gh.matchIssueOrPRUrl(text)
+					if (urlData){
+						const type = urlData.type == "pull" ? "pulls" : "issues"
+						const data = await gh.fetchIssueOrPR(urlData.nwo, type, urlData.number, this.settings.pat)
+						if (data && data.title){
+							const html = `<div><a style="text-decoration: none" href="${text}">${data.title}<span style="font-weight: 300; color: grey;">&nbsp;${urlData.nwo}#${data.number}</span></a></div>`
+							const doc = new DOMParser().parseFromString(html, 'text/html');
+	
+							link.replaceWith(doc.body.firstChild || text);
+						}
+					}
+				}
+			}
+		});
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new SettingTab(this.app, this));
 	}
 
 	onunload() {
@@ -47,10 +52,10 @@ export default class MyPlugin extends Plugin {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+class SettingTab extends PluginSettingTab {
+	plugin: GhPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: GhPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -61,13 +66,13 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
+			.setName('PAT')
+			.setDesc('Token with access to the repos you need link expansion for')
 			.addText(text => text
 				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+				.setValue(this.plugin.settings.pat)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.pat = value;
 					await this.plugin.saveSettings();
 				}));
 	}

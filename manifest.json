@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "obsidian-gh-links",
+	"name": "GitHub link expander",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Expands GitHub Issue and PR links in rendered markdown",
+	"author": "willhalto",
+	"authorUrl": "https://github.com/WillHalto",
+	"fundingUrl": "",
 	"isDesktopOnly": false
 }
