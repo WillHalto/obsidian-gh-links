@@ -1,5 +1,5 @@
 # Obsidian GitHub Links
-A simple expander for GitHub links in Obsidian. A pasted GitHub issue or PR url will be expanded into a simple `<name><repo>#<number>` format when rendered. 
+A simple expander for GitHub links in Obsidian. A pasted GitHub issue or PR url will be expanded into a simple `<title><repo>#<number>` format when rendered. 
 
 Without this plugin:
 <img width="1042" alt="image" src="https://github.com/user-attachments/assets/4cb62ced-b02c-4346-b6e8-4b09908c829f">
