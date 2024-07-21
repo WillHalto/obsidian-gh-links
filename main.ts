@@ -1,5 +1,7 @@
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import * as gh from 'gh'
+import * as octicons from '@primer/octicons';
+import { IconSelector } from 'icons';
 
 interface Settings {
 	pat: string;
@@ -25,7 +27,10 @@ export default class GhPlugin extends Plugin {
 						const type = urlData.type == "pull" ? "pulls" : "issues"
 						const data = await gh.fetchIssueOrPR(urlData.nwo, type, urlData.number, this.settings.pat)
 						if (data && data.title){
-							const html = `<div><a style="text-decoration: none" href="${text}">${data.title}<span style="font-weight: 300; color: grey;">&nbsp;${urlData.nwo}#${data.number}</span></a></div>`
+							const iconName = (new IconSelector).getIcon(data, type)
+							const svg = octicons[iconName].toSVG({ class: `icon ${iconName}` })
+
+							const html = `<div>${svg} <a style="text-decoration: none" href="${text}">${data.title}<span style="font-weight: 300; color: grey;">&nbsp;${urlData.nwo}#${data.number}</span></a></div>`
 							const doc = new DOMParser().parseFromString(html, 'text/html');
 	
 							link.replaceWith(doc.body.firstChild || text);
