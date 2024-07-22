@@ -1,12 +1,22 @@
 // helper for getting issue/PR info from the github api
 
-interface Issue {
+export interface Issue {
     title: string,
     number: number,
     url: string,
+    state: string
 }
 
-export const fetchIssueOrPR = async (nwo: string, type: "issues" | "pulls", number: number, token: string): Promise<Issue> => {
+export interface Pull {
+    title: string,
+    number: number,
+    url: string,
+    state: string,
+    merged: boolean,
+    draft: boolean
+}
+
+export const fetchIssueOrPR = async (nwo: string, type: "issues" | "pulls", number: number, token: string): Promise<Issue | Pull> => {
     const response = await fetch(`https://api.github.com/repos/${nwo}/${type}/${number}`, {
         headers: {
             'Authorization': `Bearer ${token}`,

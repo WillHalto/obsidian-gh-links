@@ -6,3 +6,24 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+.icon {
+  display: inline;
+  position: relative;
+  top: 0.2em;
+}
+
+.issue-closed, .git-merge * {
+  fill: #6e5494
+}
+
+.issue-opened, .git-pull-request * {
+  fill: #6cc644
+}
+
+.git-pull-request-closed * {
+  fill: #bd2c00
+}
+
+.git-pull-request-draft * {
+  fill: #f5f5f5
+}
